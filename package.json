@@ -8,7 +8,7 @@
     "clean": "del ./build/*",
     "build": "tsc",
     "algo": "ts-node-dev --clear src/algorithms/$algo",
-    "ds": "ts-node-dev --clear $ds",
+    "ds": "ts-node-dev --clear src/structures/$ds",
     "start": "ts-node-dev --clear $filePath"
   },
   "keywords": [],
