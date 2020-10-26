@@ -63,9 +63,11 @@ for (let i: number = itemsToSort.length - 1; i > 0; i--) {
 const boobleSort: BubbleSort = new BubbleSort(itemsToSort);
 boobleSort.displayItems();
 
+// using "high resolution" timer
 let hrStartTime = process.hrtime();
 boobleSort.sort();
 let hrEndTime = process.hrtime(hrStartTime);
 
+// now show the results
 boobleSort.displayItems();
 console.info('Execution time (hr): %ds %dms', hrEndTime[0], hrEndTime[1] / 1000000);
