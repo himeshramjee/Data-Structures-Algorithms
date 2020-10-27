@@ -1,30 +1,49 @@
+// Test the following input strings to see if they are balanced. i.e. every bracket must be closed starting with inner most bracket to outermost.
+
 const inputStrings: string[] = [ 
-  "({[)}]", 
-  "({[]})", 
-  "   ", 
-  "({[", 
-  "(a{b[c]})", 
-  "(d{e[f]}", 
-  "[a]{b}(c)", 
-  "]})}" 
+  // FIXME: Yes these should be test assertions or at least proper objects but looking for quick way to eyeball results.
+  "({[)}]       is not balanced", 
+  "({[]})       is balanced", 
+  "                            ", // is not balanced :)
+  "             is not balanced", 
+  "({[          is not balanced", 
+  "(a{b[c]})    is balanced", 
+  "(d{e[f]}     is not balanced", 
+  "[a]{b}(c)    is balanced", 
+  "]})}         is not balanced",
+  "a{b(c[d]e)f} is balanced" 
 ];
 
-// Test the above input strings to see if they are balanced. i.e. every bracket must be closed starting with inner most bracket to outermost.
-
-// Maps available from ES6
+const bracketsDataSet = new Set<string>();
 const bracketsMap: Map<string, string> = new Map<string, string>([ 
   ["(", ")"], 
   ["{", "}"], 
   ["[", "]"] 
 ]);
-const bracketsDataSet = new Set<string>();
+
 bracketsMap.forEach((value, key) => {
   bracketsDataSet.add(key);
   bracketsDataSet.add(value);
 });
 
+function getCharsToProcess(input: string) : string[] {
+  if (input.trim().length == 0) {
+    return [];
+  }
+  const charsToProcess = input.split('');
+  let countBrackets = 0;
+  charsToProcess.map(c => {
+    if (bracketsDataSet.has(c)) {
+      countBrackets++;
+    }
+  });
+
+  return countBrackets >= 2 ? charsToProcess : [];
+}
+
 function bracketsAreBalanced(inputString: string) : boolean {
-  if (inputString.trim().length == 0) {
+  const charsToProcess = getCharsToProcess(inputString);
+  if (charsToProcess.length == 0) {
     return false;
   }
 
@@ -33,8 +52,6 @@ function bracketsAreBalanced(inputString: string) : boolean {
   let poppedChar;
   let inputChar;
 
-  // Explode string into parts
-  const charsToProcess = inputString.split('');
   for (let i = 0; i < charsToProcess.length; i++) {
     inputChar = charsToProcess[i];
 
@@ -67,8 +84,8 @@ function bracketsAreBalanced(inputString: string) : boolean {
 
 inputStrings.map(str => {
   if (bracketsAreBalanced(str)) {
-    console.log(`${str} \n\t is balanced.`);
+    console.log(`${str} \t -> Yes balanced.`);
   } else {
-    console.log(`${str} \n\t is not balanced.`);
+    console.log(`${str} \t -> Nope not balanced.`);
   }
 });
