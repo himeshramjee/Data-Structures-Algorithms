@@ -10,7 +10,7 @@ export abstract class SortBase<T> {
   }
 
   public applySort() {
-    console.log(`These ${this.items.length} items will be sorted:`);
+    console.log(`These ${this.items.length} items must be sorted:`);
     this.displayItems();
 
     // Start "high resolution" timer
@@ -27,10 +27,10 @@ export abstract class SortBase<T> {
     console.info('Execution time (hr): %ds %dms', hrEndTime[0], hrEndTime[1] / 1000000);
   }
 
-  protected swapItems(x: number, y: number) {
-    const z = this.items[x];
-    this.items[x] = this.items[y];
-    this.items[y] = z;
+  protected swapItems(leftFromIndex: number, rightToIndex: number) {
+    const z = this.items[leftFromIndex];
+    this.items[leftFromIndex] = this.items[rightToIndex];
+    this.items[rightToIndex] = z;
   }
 
   // Shuffle array - (apparently using Fisher-Yates Algorithm?)
@@ -44,9 +44,10 @@ export abstract class SortBase<T> {
   }
 
   protected displayItems() {
+    process.stdout.write("\t");
     this.items.map(i => {
       process.stdout.write(i + ", ");
     });
-    console.log("\n");
+    process.stdout.write("\n");
   }
 }
