@@ -9,6 +9,7 @@
     "build": "tsc",
     "algo": "ts-node-dev --clear src/algorithms/$algo",
     "ds": "ts-node-dev --clear src/structures/$ds",
+    "soln": "ts-node-dev --clear src/solutions/$soln",
     "start": "ts-node-dev --clear $filePath"
   },
   "keywords": [],
