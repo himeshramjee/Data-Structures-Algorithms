@@ -20,6 +20,9 @@ class InsertionSort extends NumberSort {
     this.sortTwo();
   }
 
+  // When compared with sortOne(), this is more complex to read, but it halves the number of 
+  // memory writes needed when doing a swap or shift. i.e. a single swap involves 2 writes and a shift involves 1.
+  // 
   // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
   // [ ,  ,  ,  ,  ,  ,  , O,  ,  ] | maxItemCount = 10
   // [ ,  , L,  ,  ,  ,  ,  , R,  ] | rigthValue = 2 | doShift = true
@@ -34,12 +37,10 @@ class InsertionSort extends NumberSort {
     let doShift: boolean = false;
 
     for (let outer = 0; outer < this.maxItemCount; outer++) {
-      // console.log(`Outer is at ${outer}`);
       leftIndex = outer;
       rightIndex = outer + 1;
 
       while (leftIndex >= 0 && this.items[rightIndex] < this.items[leftIndex]) {
-        // console.log(`\tleftIndex is at ${leftIndex}`)
         leftIndex--;
         doShift = true;
       }
@@ -47,13 +48,10 @@ class InsertionSort extends NumberSort {
       if (doShift) {
         // Move leftIndex to correct position, compensating for the "last check" that exited the while loop
         leftIndex++;
-        // console.log(`\tleftIndex is reset to ${leftIndex}`)
-
         // "Remove" the right value that will be moved to the left
         rightValue = this.items[rightIndex];
         // Shift all left items one position to the right to make place for rightValue
         for (let i = rightIndex - 1; i >= leftIndex; i--) {
-          // console.log(`\t\ti is at ${i}`)
           this.items[i + 1] = this.items[i];
         }
         // Put back rightValue
