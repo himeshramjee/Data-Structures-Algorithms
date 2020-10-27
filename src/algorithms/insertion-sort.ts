@@ -10,14 +10,14 @@ class InsertionSort extends NumberSort {
   sort() {
     // TODO: Ask user which sort to execute
     console.log("Running Sort One...");
-    this.sortOne();
+    this.sortWithSwaps();
     this.displayItems();
 
     console.log("\nShuffling items for round 2...");
     this.shuffleItems();
     this.displayItems();
     console.log("Running Sort Two...");
-    this.sortTwo();
+    this.sortWithCopy();
   }
 
   // When compared with sortOne(), this is more complex to read, but it halves the number of 
@@ -28,7 +28,7 @@ class InsertionSort extends NumberSort {
   // [ ,  , L,  ,  ,  ,  ,  , R,  ] | rigthValue = 2 | doShift = true
   // [9, 8, 3, 0, 1, 4, 5, 6, 2, 7]
   // [0, 1, 3, 4, 5, 6, 8, 9,  , 7]
-  sortTwo() {
+  sortWithCopy() {
     console.log(`Sorting ${this.maxItemCount} items...`);
 
     let leftIndex: number;
@@ -70,7 +70,7 @@ class InsertionSort extends NumberSort {
   // (on the right in this case) and then shift/copy left items to the right which would create 
   // an open slot at the left end (to insert the smaller item). 
   // See sortTwo() for how that's implemented.
-  sortOne() {
+  sortWithSwaps() {
     console.log(`Sorting ${this.maxItemCount} items...`);
 
     let leftIndex: number;
