@@ -66,8 +66,9 @@ class InsertionSort extends NumberSort {
   }
 
   // This version swaps 2 items which could be inefficient for costly swaps.
-  // The alternative (that actually adheres to insertion algorithm) is to remove the item at the target position to the
-  // left of leftIndex and then shift left items to the right using an single overwrite (as opposed to swap). 
+  // The alternative (that actually adheres to insertion algorithm) is to remove the smaller item
+  // (on the right in this case) and then shift/copy left items to the right which would create 
+  // an open slot at the left end (to insert the smaller item). 
   // See sortTwo() for how that's implemented.
   sortOne() {
     console.log(`Sorting ${this.maxItemCount} items...`);
