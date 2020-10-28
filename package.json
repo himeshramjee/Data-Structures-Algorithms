@@ -7,11 +7,11 @@
   "scripts": {
     "clean": "del ./build/*",
     "build": "tsc",
-    "algo": "ts-node-dev --clear src/algorithms/$algo",
-    "algoalgo": "ts-node-dev --clear src/algorithms/recursive/$algo",
-    "ds": "ts-node-dev --clear src/structures/$ds",
-    "soln": "ts-node-dev --clear src/solutions/$soln",
-    "start": "ts-node-dev --clear $filePath"
+    "recurse": "ts-node-dev --clear src/algorithms/recursive/$file",
+    "search": "ts-node-dev --clear src/algorithms/search/$file",
+    "sort": "ts-node-dev --clear src/algorithms/sort/$file",
+    "structures": "ts-node-dev --clear src/structures/$file",
+    "solutions": "ts-node-dev --clear src/solutions/$file"
   },
   "keywords": [],
   "author": "",
