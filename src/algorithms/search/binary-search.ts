@@ -13,12 +13,8 @@ class BinarySearch extends NumbersSearch {
     let start: number = 0;
     let end: number = dataset.length - 1;
     let midPointIndex: number = 0;
-    let loopCount: number = 0;
 
     while (start <= end) {
-      if (loopCount++ == 10) {
-        break;
-      }
       // Calculate new midpoint
       midPointIndex = start + Math.floor((end - start) / 2);
 
