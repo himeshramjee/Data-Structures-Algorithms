@@ -1,6 +1,6 @@
 import { NumbersSearch } from "./numbers-search";
 
-class BinarySearch extends NumbersSearch {
+class BinarySearchResursive extends NumbersSearch {
 
   constructor(dataSetSize: number = 42) {
     super(dataSetSize);
@@ -12,37 +12,37 @@ class BinarySearch extends NumbersSearch {
     let searchKeyIndex: number = -1;
     let start: number = 0;
     let end: number = dataset.length - 1;
+
+    searchKeyIndex = this.doMagic(searchKey, start, end, dataset);
+
+    return searchKeyIndex;
+  }
+
+  private doMagic(searchKey: number, start: number, end: number, dataset: number[]) : number {
     let midPointIndex: number = 0;
-    let loopCount: number = 0;
 
     while (start <= end) {
-      if (loopCount++ == 10) {
-        break;
-      }
       // Calculate new midpoint
       midPointIndex = start + Math.floor((end - start) / 2);
 
       if (searchKey == dataset[midPointIndex]) {
-        searchKeyIndex = midPointIndex;
-        break;
+        return midPointIndex;
       }
 
       // Left half
       if (searchKey < dataset[midPointIndex]) {
-        end = midPointIndex - 1;
-        continue;
+        return this.doMagic(searchKey, start, midPointIndex - 1, dataset);
       }
 
       // Right half
       if (searchKey > dataset[midPointIndex]) {
-        start = midPointIndex + 1;
-        continue;
+        return this.doMagic(searchKey, midPointIndex + 1, end, dataset);
       }
     }
 
-    return searchKeyIndex;
+    return -1;
   }
 }
 
-const binarySearch: BinarySearch = new BinarySearch();
+const binarySearch: BinarySearchResursive = new BinarySearchResursive(100);
 NumbersSearch.run(binarySearch);

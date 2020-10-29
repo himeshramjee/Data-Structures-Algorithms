@@ -1,6 +1,48 @@
 import { SearchBase } from "./search-base";
 
 export abstract class NumbersSearch extends SearchBase<number> {
+  private _dataset: number[] = new Array<number>();
+
+  constructor(dataSetSize: number) {
+    super();
+
+    if (this.dataset.length == 0) {
+      this.populateItems(dataSetSize, this.dataset);
+    }
+
+    // Randomise the data - yes demonstrative only for the binary search precon, I'll sort it next :)
+    this.shuffleItems(this.dataset);
+
+    // Sort the dataset
+    this.sortItems(this.dataset.length, this.dataset);
+
+    console.log("\nPrinting dataset:");
+    this.displayItems(this.dataset);
+  }
+
+  public static run(searchAlgorithm: NumbersSearch) {
+    let searchBadKeys: number[] = [-1]; 
+    searchBadKeys.push(searchAlgorithm.dataset[searchAlgorithm.dataset.length - 1] + 1);
+    let searchKeys = searchBadKeys.concat(searchAlgorithm.dataset.slice(0, 20));
+
+    let result = -1;
+    let resultMessage = "\~(^^)~/";
+
+    searchKeys.map(searchKey => {
+      result = searchAlgorithm.find(searchKey, searchAlgorithm.dataset);
+      if (result == -1) {
+        if (searchBadKeys.indexOf(searchKey) != -1) {
+          resultMessage = "Correct";
+        } else {
+          resultMessage = "Incorrect";
+        }
+      } else {
+        resultMessage = (searchAlgorithm.dataset[result] == searchKey) ? "Correct" : "Incorrect";
+      }
+      
+      console.log(`Location of ${searchKey} is at index ${result}. ${resultMessage}`);
+    });
+  }
 
   protected populateItems(itemCount: number, itemsStore: number[]) {
     if (!itemsStore) {
@@ -44,5 +86,9 @@ export abstract class NumbersSearch extends SearchBase<number> {
         doShift = false;
       }
     }
+  }
+
+  get dataset(): number[] {
+    return this._dataset;
   }
 }
