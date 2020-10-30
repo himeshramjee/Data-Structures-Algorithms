@@ -2,14 +2,14 @@ export abstract class SortBase<T> {
   protected items: T[];  // FIXME: Move up one level in class hierarchy
   protected maxItemCount: number;
   
-  abstract sort(): void;
+  protected abstract sort(): void;
 
   constructor(maxItemCount: number) {
     this.items = new Array<T>();
     this.maxItemCount = maxItemCount;
   }
 
-  public applySort() {
+  public sortItems() {
     console.log(`These ${this.items.length} items must be sorted:`);
     this.displayItems();
 
@@ -23,8 +23,9 @@ export abstract class SortBase<T> {
     let hrEndTime = process.hrtime(hrStartTime);
 
     // Show the results
+    console.log("Results: ");
     this.displayItems();
-    console.info('Execution time (hr): %ds %dms', hrEndTime[0], hrEndTime[1] / 1000000);
+    console.info('Execution time: %ds %dms', hrEndTime[0], hrEndTime[1] / 1000000);
   }
 
   protected swapItems(leftFromIndex: number, rightToIndex: number) {

@@ -8,7 +8,7 @@ class BubbleSort extends NumberSort {
   }
 
   // [3, 1, 8, 5, 2, 4, 9, 10, 6, 7]
-  public sort() {
+  protected sort() {
     console.log("Snorting items...");
 
     for (let outer = this.maxItemCount -1; outer >= 0; outer--) {
@@ -30,7 +30,7 @@ function runBubbleSort() {
 
   // Sort the array
   const boobleSort: BubbleSort = new BubbleSort();
-  boobleSort.applySort();
+  boobleSort.sortItems();
 }
 
 runBubbleSort();

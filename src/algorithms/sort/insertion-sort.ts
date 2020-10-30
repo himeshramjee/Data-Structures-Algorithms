@@ -7,7 +7,7 @@ class InsertionSort extends NumberSort {
     this.shuffleItems();
   }
 
-  sort() {
+  protected sort() {
     // TODO: Ask user which sort to execute
     console.log("Running Sort One...");
     this.sortWithSwaps();
@@ -98,7 +98,7 @@ function runInsertSort() {
 
   // Sort the array
   const insertSort: InsertionSort = new InsertionSort();
-  insertSort.applySort();
+  insertSort.sortItems();
 }
 
 runInsertSort();

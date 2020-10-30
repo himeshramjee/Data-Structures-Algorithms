@@ -3,12 +3,10 @@ import { NumberSort } from "./number-sort";
 class SelectionSort extends NumberSort {
   constructor(countItemsToSort: number = 5) {
     super(countItemsToSort);
-    this.populateItems();
-    this.shuffleItems();
   }
 
   // [3, 1, 8, 5, 2, 4, 9, 10, 6, 7]
-  sort() {
+  protected sort() {
     console.log(`\nSorting ${this.maxItemCount} items...`);
 
     let postionToFill: number;
@@ -38,7 +36,7 @@ function runSelectionSort() {
 
   // Sort the array
   const selectSort: SelectionSort = new SelectionSort();
-  selectSort.applySort();
+  selectSort.sortItems();
 }
 
 runSelectionSort();
