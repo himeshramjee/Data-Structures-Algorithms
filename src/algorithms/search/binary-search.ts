@@ -4,11 +4,14 @@ class BinarySearch extends NumbersSearch {
 
   constructor(dataSetSize: number = 42) {
     super(dataSetSize);
+
+    // Sort the dataset
+    this.sortItems(this.dataset.length, this.dataset);
   }
 
   // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,  10, 11, 12, 13, 14, 15, 16, 17, 18]
   // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-  find(searchKey: number, dataset: number[]) : number {
+  protected find(searchKey: number, dataset: number[]) : number {
     let searchKeyIndex: number = -1;
     let start: number = 0;
     let end: number = dataset.length - 1;

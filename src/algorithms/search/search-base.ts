@@ -1,6 +1,6 @@
 export abstract class SearchBase<T> {
 
-  abstract find(searchKey: T, dataset: T[]) : T;
+  protected abstract find(searchKey: T, dataset: T[]) : T;
 
   // Shuffle array - (apparently using Fisher-Yates Algorithm?)
   protected shuffleItems(itemsStore: T[]) {

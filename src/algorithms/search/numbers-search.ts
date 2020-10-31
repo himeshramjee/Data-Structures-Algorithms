@@ -10,11 +10,8 @@ export abstract class NumbersSearch extends SearchBase<number> {
       this.populateItems(dataSetSize, this.dataset);
     }
 
-    // Randomise the data - yes demonstrative only for the binary search precon, I'll sort it next :)
+    // Randomise the data
     this.shuffleItems(this.dataset);
-
-    // Sort the dataset
-    this.sortItems(this.dataset.length, this.dataset);
 
     console.log("\nPrinting dataset:");
     this.displayItems(this.dataset);

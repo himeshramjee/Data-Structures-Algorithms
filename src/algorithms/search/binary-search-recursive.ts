@@ -4,6 +4,9 @@ class BinarySearchResursive extends NumbersSearch {
 
   constructor(dataSetSize: number = 42) {
     super(dataSetSize);
+
+    // Sort the dataset
+    this.sortItems(this.dataset.length, this.dataset);
   }
 
   // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,  10, 11, 12, 13, 14, 15, 16, 17, 18]
