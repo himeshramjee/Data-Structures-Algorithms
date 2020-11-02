@@ -120,6 +120,8 @@ class BinarySearchTree extends NumbersSearch {
     // Delete root node
     if (parentNode == null) {
       nodeToDelete = null;
+      // FIXME: No, you can't make the assumption that deleting the root node means deleting the tree.
+      console.log("FIXME: This is cute and VERY wrong. lol");
       return true;
     }
 
