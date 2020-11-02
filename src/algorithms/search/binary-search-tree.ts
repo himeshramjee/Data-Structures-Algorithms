@@ -1,78 +1,48 @@
-import { textChangeRangeIsUnchanged } from "typescript";
 import { NumbersSearch } from "./numbers-search";
+import { TreeNode } from "../../structures/tree-node";
 
-class TreeNode<T, O> {
-  key: T;
-  data: O;
-  leftChild?: TreeNode<T, O>;
-  rightChild?: TreeNode<T, O>;
+class BinarySearchTree extends NumbersSearch {
+  root: TreeNode<number> | null;
 
-  constructor(key: T, data: O, leftChild?: TreeNode<T, O>, rightChild?: TreeNode<T, O>) {
-    this.key = key;
-    this.data = data;
-    this.leftChild = leftChild;
-    this.rightChild = rightChild;
+  constructor(dataSetSize: number = 50) {
+    super(dataSetSize);
+
+    this.root = null;
+
+    this.dataset.map((n: number, i: number) => {
+      if (!this.insert(n, i)) {
+        console.log(`Failed to insert node with key ${n}.`);
+      }
+    });
   }
 
-  displayNode() : void {
-    console.log(`${this.key} has ${this.data ? "data" : "no data"}. \n\tLeftChild: ${this.leftChild ? this.leftChild.key : "none"}\n\tRigthChild: ${this.rightChild ? this.rightChild.key : "none"}`)
-  }
-}
-
-class Tree<T, O> {
-  root: TreeNode<T, O> | undefined;
-
-  find(key: T) {
-    if (key === undefined || key === null) {
+  find(searchKey: number, dataset?: number[]) : number {
+    if (searchKey === undefined || searchKey === null) {
       console.log("A search key is required to run a search.");
-      return;
+      return -1;
     }
 
-    console.log(`Finding ${key}`);
-
-    let nextNode: TreeNode<T, O> | undefined = this.root;
-
-    while (nextNode != undefined) {
-      // Check if the search key is located in current subtree
-      if (nextNode.key === key) {
-        console.log(`Found ${nextNode.key} in node with data ${nextNode.data} `);
-        break;
-      }
-      if (nextNode.leftChild?.key === key) {
-        console.log(`Found ${nextNode.leftChild.key} in a left node with data ${nextNode.leftChild.data} `);
-        break;
-      }
-      if (nextNode.rightChild?.key === key) {
-        console.log(`Found ${nextNode.rightChild.key} in a right node with data ${nextNode.rightChild.data} `);
-        break;
-      }
-
-      // Determine next node to search
-      if (key > nextNode.key) {
-        if (nextNode.rightChild) {
-          nextNode = nextNode.rightChild;
-          console.log(`\tAssigning right side nextNode (${nextNode.key}) to continue search...`);
-          continue;
-        } else {
-          // Return key not found
-        }
-      }
-      if (key < nextNode.key) {
-        if (nextNode.leftChild) {
-          nextNode = nextNode.leftChild;
-          console.log(`\tAssigning left side nextNode (${nextNode.key}) to continue search...`);
-          continue;
-        } else {
-          // Return key not found
-        }
-      }
-
-      console.log("Key does not exist in tree.");
-      nextNode = undefined;
+    if (this.root == null) {
+      console.log(`Result: ${searchKey} does not exist in empty tree.`);
+      return -1;
     }
+
+    let keyNode: TreeNode<number> | null = this.findNode(searchKey);
+    if (!keyNode) {
+      // console.log(`Result: ${searchKey} does not exist in the tree. Result ${keyNode}.`);
+      return -1;
+    }
+
+    if (keyNode.key === searchKey) {
+      // console.log(`Result: ${searchKey} found with data: ${keyNode.data}`);
+      return keyNode.data;
+    }
+
+    console.error(`Whoa! This should never have happened! findSubtreeForKey() should have returned null.`);
+    return -1;
   }
 
-  insert(key: T, data: O) : boolean {
+  insert(key: number, data: number) : boolean {
     // Check for required input
     if ((key === undefined || key === null) || (data === undefined || data === null)) {
       console.log("Both key and data are required to insert a new node.");
@@ -81,12 +51,13 @@ class Tree<T, O> {
 
     // Is this the first node being inserted?
     if (!this.root) {
-      this.root = new TreeNode<T, O>(key, data);
+      this.root = new TreeNode<number>(key, data, null);
       return true;
     }
 
     // Find the node to insert at
     let nextNode = this.root;
+    let parentNode = null;
     while (true) {
       if (nextNode.key === key) {
         console.log(`Node with key ${key} already exists.`);
@@ -96,10 +67,11 @@ class Tree<T, O> {
       // Check if we should insert left
       if (key < nextNode.key) {
         if (nextNode.leftChild) {
+          parentNode = nextNode;
           nextNode = nextNode.leftChild;
           continue;
         } else {
-          nextNode.leftChild = new TreeNode<T, O>(key, data);
+          nextNode.leftChild = new TreeNode<number>(key, data, nextNode);
           return true;
         }
       }
@@ -107,46 +79,162 @@ class Tree<T, O> {
       // Check if we should insert right
       if (key > nextNode.key) {
         if (nextNode.rightChild) {
+          parentNode = nextNode;
           nextNode = nextNode.rightChild;
           continue;
         } else {
-          nextNode.rightChild = new TreeNode<T, O>(key, data);
+          nextNode.rightChild = new TreeNode<number>(key, data, nextNode);
           return true;
         }
       }
     }
   }
 
-  delete(key: T) {
-    console.log(`Deleting ${key}`);
-  }
-}
+  // Illustrative only
+  // Input: 2, 6, 10, 9, 1, 7, 3, 5, 8, 4
+  //               2             
+  //         /            \      
+  //        1              6     
+  //                     /   \   
+  //                    3     10 
+  //                   / \   / \ 
+  //                  1   5 9   2
+  //                     / /     
+  //                    4  7     
+  //                       \     
+  //                        8    
+  delete(key: number) : boolean {
+    console.log(`\nDeleting ${key}`);
 
-class BinarySearchTree extends NumbersSearch {
-  private tree: Tree<number, number>;
+    let nodeToDelete : TreeNode<number> | null = this.findNode(key);
+    let parentNode: TreeNode<number> | null = nodeToDelete?.parentNode ? nodeToDelete?.parentNode : null;
 
-  constructor(dataSetSize: number = 5) {
-    super(dataSetSize);
+    if (!nodeToDelete) {
+      console.log(`Node with key ${key} does not exist. Nothing has been deleted.`);
+      return false;
+    } else if (nodeToDelete.key != key) {
+      console.log(`Unexpected key found. Expected ${key} but got ${nodeToDelete.key}. Nothing has been deleted.`);
+      return false;
+    }  // else, nodeToDelete exists so delete it next
 
-    this.tree = new Tree<number, number>();
+    // Delete root node
+    if (parentNode == null) {
+      nodeToDelete = null;
+      return true;
+    }
 
-    this.dataset.map((n: number) => {
-      if (!this.tree.insert(n, n)) {
-        console.log(`Failed to insert node with key ${n}.`);
+    if (nodeToDelete.key === key) {
+      // Delete node with no children - node is on left
+      if (parentNode.leftChild?.key === nodeToDelete.key) {
+        parentNode.leftChild = null;
+        return true;
       }
-    });
+
+      // Delete node with no children - node is on right
+      if (parentNode.rightChild?.key === nodeToDelete.key) {
+        parentNode.rightChild = null;
+        return true;
+      }
+
+      // Delete node with 1 child - node is on left
+      if (parentNode.leftChild?.key === nodeToDelete.key) {
+        if (nodeToDelete.leftChild) {
+          parentNode.leftChild = nodeToDelete.leftChild;
+        }
+        if (nodeToDelete.rightChild) {
+          parentNode.leftChild = nodeToDelete.rightChild;
+        }
+        return true;
+      }
+
+      // Delete node with 1 child - node is on right
+      if (parentNode.rightChild?.key === nodeToDelete.key) {
+        if (nodeToDelete.leftChild) {
+          parentNode.rightChild = nodeToDelete.leftChild;
+        }
+        if (nodeToDelete.rightChild) {
+          parentNode.rightChild = nodeToDelete.rightChild;
+        }
+        return true;
+      }
+
+      // Delete a subtree/node with 2 children
+      console.log("\t TODO: Deleting a subtree isn't yet supported.");
+      return false;
+    }
+
+    return false;
   }
 
-  find(searchKey: number, dataset?: number[]) : number {
-    this.tree.find(searchKey);
+  private findNode(nodeKey: number) : TreeNode<number> | null {
+    // console.log(`findNode searching for key ${nodeKey}`);
+    if (!this.root) {
+      // console.log(`${nodeKey} not found in empty tree.`);
+      return null;
+    }
 
-    return searchKey;
+    // Check key at root which has no parent
+    if (this.root.key === nodeKey) {
+      return this.root;
+    }
+
+    let currentNode: TreeNode<number> | null = this.root;
+    while (true) {
+      // Check if the search key is located in current subtree
+      if (currentNode.leftChild?.key === nodeKey) {
+        currentNode = currentNode.leftChild;
+        // console.log(`Found ${currentNode.key} at left of parent node ${currentNode.parentNode?.key}`);
+        return currentNode;
+      }
+      if (currentNode.rightChild?.key === nodeKey) {
+        currentNode = currentNode.rightChild;
+        // console.log(`Found ${currentNode.key} at right of parent node ${currentNode.parentNode?.key}`);
+        return currentNode;
+      }
+
+      // Determine next node to search
+      if (nodeKey > currentNode.key) {
+        if (currentNode.rightChild) {
+          currentNode = currentNode.rightChild;
+          continue;
+        } else {
+          // Return - key not found
+          currentNode = null;
+          return null;
+        }
+      }
+      if (nodeKey < currentNode.key) {
+        if (currentNode.leftChild) {
+          currentNode = currentNode.leftChild;
+          continue;
+        } else {
+          // Return - key not found
+          currentNode = null;
+          return null;
+        }
+      }
+
+      // console.log("Key does not exist in tree.");
+      // currentNode = null;
+      return null;
+    }
   }
 }
 
-console.clear();
-const binarySearchTree: BinarySearchTree = new BinarySearchTree();
-const searchKey : number = 1;
-console.log(`Finding ${searchKey}...`);
-binarySearchTree.find(searchKey);
-console.log("Done.");
+function doSearch() {
+  console.clear();
+  console.log("\nStarting demo...\n");
+  const binarySearchTree: BinarySearchTree = new BinarySearchTree(10);
+  
+  let runTestResult = binarySearchTree.runTest();
+  console.log(`${runTestResult ? "All" : "Some"} internal runTest()s ${runTestResult ? "Passed" : "Failed."}.`);
+  
+  let deleteResult = binarySearchTree.delete(5);
+  console.log(`${deleteResult ? "Node 5 was deleted\n" : "Failed to delete Node 5\n"}`);
+  
+  console.log(`Confirming that Node 5 is no longer in the tree...`);
+  let result5 = binarySearchTree.find(5);
+  console.log(`Result after deleting 5: ${result5} which is ${result5 == -1 ? "Correct." : "Incorrect."}`);
+  console.log("\nDemo is done.");
+}
+doSearch();
