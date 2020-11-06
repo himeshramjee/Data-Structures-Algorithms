@@ -11,6 +11,7 @@
     "search": "ts-node-dev --clear src/algorithms/search/$file",
     "sort": "ts-node-dev --clear src/algorithms/sort/$file",
     "structures": "ts-node-dev --clear src/structures/$file",
+    "dcp": "ts-node-dev --clear src/daily-coding-problems/$file",
     "solutions": "ts-node-dev --clear src/solutions/$file"
   },
   "keywords": [],
