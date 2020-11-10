@@ -44,4 +44,4 @@ class BinarySearch extends NumbersSearch {
 }
 
 const binarySearch: BinarySearch = new BinarySearch();
-NumbersSearch.run(binarySearch);
+binarySearch.runTest();

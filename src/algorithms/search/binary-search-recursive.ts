@@ -48,4 +48,4 @@ class BinarySearchResursive extends NumbersSearch {
 }
 
 const binarySearch: BinarySearchResursive = new BinarySearchResursive(100);
-NumbersSearch.run(binarySearch);
+binarySearch.runTest();

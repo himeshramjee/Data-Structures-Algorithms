@@ -1,11 +1,10 @@
 import path from "path";
 import fs from "fs";
-import readline from "readline";
 
 export const readFromFile = (
     relativeFilePath: string, 
     fileEntries: Array<string>, 
-    transform?: (line: string) => string
+    transform?: (line: string) => string[]
   ) : boolean => {
   if (!fileEntries) {
     fileEntries = new Array<string>();
@@ -14,23 +13,36 @@ export const readFromFile = (
   // Resolve path, else it'll try and load the path relative to process.cwd
   relativeFilePath = path.resolve(__dirname, relativeFilePath);
 
-  // Create the read interface
-  const readInterface = readline.createInterface(
-    fs.createReadStream(relativeFilePath), 
-    process.stdout, 
-    undefined, 
-    false
-  );
+  const fileContent = fs.readFileSync(relativeFilePath, 'utf-8');
+  fileContent.split("\n").map((line) => {
+    if (line.trimLeft().startsWith("#") || line.trimLeft().startsWith("//")) {
+      return;
+    }
 
-  // Read line by line
-  readInterface.on("line", (line) => {
     if (transform) {
-      fileEntries.push(transform(line));
+      let transformedEntryItems = transform(line);
+      
+      transformedEntryItems.map((item) => {
+        fileEntries.push(item);
+      });
     } else {
       fileEntries.push(line);
     }
-    console.log(line);
   });
 
   return fileEntries.length > 0;
 };
+
+export const splitEntry = (entry: string, delimeter: string = " "): string[] => {
+  let transformedEntries: string[] = [];
+
+  entry.split(delimeter).map((item) => {
+    item = item.trim();
+    if (item.length === 0) {
+      return;
+    }
+    transformedEntries.push(item);
+  });
+  
+  return transformedEntries;
+}
