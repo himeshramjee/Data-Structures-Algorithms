@@ -49,8 +49,7 @@ class DCPBinaryTree {
 
     console.log("Serializing items...");
     this.serializer(serializedItems, root);
-    console.log("Serialization result:");
-    console.log(serializedItems);
+    console.log(`Serialization result: ${serializedItems}.`);
 
     return serializedItems;
   }
@@ -59,11 +58,14 @@ class DCPBinaryTree {
     if (!root) {
       return;
     }
+    
     // Simulate go left
     this.serializer(serializedItems, root.left);
+
     // Visit a node
-    console.log(`\t processed node: ${root.value}`);
     serializedItems = serializedItems + " " + root.value;
+    console.log(`\t processed node: ${root.value}. SerializedItems: ${serializedItems}`);
+    
     // Simulate go right
     this.serializer(serializedItems, root.right);
   }
@@ -77,7 +79,7 @@ class DCPBinaryTree {
     }
 
     // Create the root node
-    const item = items.shift();
+    const item: string | null = this.getNextItem(items);
     if (!item) {
       console.error("Missing root item.");
       return null;
@@ -91,40 +93,31 @@ class DCPBinaryTree {
     return root;
   }
 
-  private deserializer(items: string[], subtreeRoot: DCPNode<string>) : DCPNode<string> | null {
+  private deserializer(items: string[], subtreeRoot: DCPNode<string>, goingLeft: boolean = true) : DCPNode<string> | null {
     if (items.length === 0) {
       return null;
     }
 
-    // Grab next item
-    let tempNode = null;
+    // Grab next item and construct new node
     let item: string | null = this.getNextItem(items);
     if (!item) {
       return null;
     }
+    let tempNode = new DCPNode<string>(item, null, null);
+    if (goingLeft) {
+      subtreeRoot.left = tempNode;
+    } else {
+      subtreeRoot.right = tempNode;
+    }
 
-    console.log(`\t Next item: ${item} with root ${subtreeRoot ? subtreeRoot.value : "n/a"}`);
+    // Visit node
+    console.log(`\t New ${goingLeft ? "left" : "right" } node: ${tempNode.value} rooted at ${subtreeRoot ? subtreeRoot.value : "n/a"}`);
 
-    // Construct new left node
-    tempNode = new DCPNode<string>(item, null, null);
-    subtreeRoot.left = tempNode;
-
-    // Simulate go left
+    // Recurse left
     this.deserializer(items, tempNode);
 
-    // Visit a node
-    console.log(`\t new node: ${tempNode.value} rooted at ${subtreeRoot ? subtreeRoot.value : "n/a"}`);
-
-    // // Grab next item
-    // item = this.getNextItem(items);
-    // if (!item) {
-    //   return null;
-    // }
-    // // Construct new right node
-    // tempNode = new DCPNode<string>(item, null, null);
-
-    // Simulate go right
-    subtreeRoot.right = this.deserializer(items, tempNode);
+    // Recurse
+    this.deserializer(items, tempNode, false);
 
     return subtreeRoot;
   }
@@ -189,7 +182,7 @@ function realizeTree() {
     console.error("Deserialize returned invalid root node. The fucker, how dare it.");
     return;
   }
-  // dcpBT.serialize(root);
+  dcpBT.serialize(root);
 }
 
 realizeTree();
