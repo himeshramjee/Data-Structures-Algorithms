@@ -34,8 +34,9 @@ class DCPNode<T> {
 
 class DCPBinaryTree {
   root: DCPNode<string> | null;
-  emptyNodeMarker: string = "-1";
   serializedItems: string = "";
+  static emptyNodeMarker: string = "-1";
+  static nodeDelimiter: string = " ";
   
   constructor(startNode?: DCPNode<string>) {
     this.root = null;
@@ -44,7 +45,7 @@ class DCPBinaryTree {
     }
   }
 
-  serialize(item: DCPNode<string>): String {
+  serialize(item: DCPNode<string>): string {
     console.log("Serializing items...");
     this.serializer(item);
     console.log(`Serialization result: ${this.serializedItems}.`);
@@ -58,7 +59,11 @@ class DCPBinaryTree {
     }
 
     // Visit a node
-    this.serializedItems += " " + item.value;
+    if (this.serializedItems.length === 0) {
+      this.serializedItems = item.value;
+    } else {
+      this.serializedItems += " " + item.value;
+    }
     console.log(`\t processed node: ${item.value}. SerializedItems: ${this.serializedItems}`);
 
     // Recurse left
@@ -76,12 +81,14 @@ class DCPBinaryTree {
     }
   }
 
-  deserialize(serializedObject: string): DCPNode<string> | null {
-    const items: string[] = serializedObject.split(',');
+  deserialize(serializedBTree: string): DCPNode<string> | null {
+    const items: string[] = serializedBTree.split(DCPBinaryTree.nodeDelimiter);
 
     if (items.length < 1) {
       console.error("Cannot deserialize emtpy object.");
       return null;
+    } else {
+      console.log(`\tItems length: ${items.length}`);
     }
 
     // Construct all remaining nodes
@@ -95,9 +102,12 @@ class DCPBinaryTree {
 
     // Grab next item and construct new node
     let item: string | null = this.getNextItem(items);
+    
     if (!item) {
       return null;
     }
+
+    // Construct new node
     let tempNode = new DCPNode<string>(item, null, null);
     if (parent) {
       if (goingLeft) {
@@ -122,7 +132,7 @@ class DCPBinaryTree {
   private getNextItem(items: string[]) : string | null {
     const item: string | undefined = items.shift();
 
-    if (!item || item === this.emptyNodeMarker) {
+    if (!item || item === DCPBinaryTree.emptyNodeMarker) {
       return null;
     }
 
@@ -130,22 +140,26 @@ class DCPBinaryTree {
   }
 }
 
-// function runRealizeTreeTest() {
-//   let node: DCPNode<string> = new DCPNode("root", 
-//     new DCPNode<string>("left.left", null, null), 
-//     new DCPNode<string>("right", null, null));
+function runRealizeTreeTest() {
+  let node: DCPNode<string> = new DCPNode("root", 
+    new DCPNode<string>("left", new DCPNode<string>("leftleft", null, null), null), 
+    new DCPNode<string>("right", null, null));
 
-//   let dcpBT: DCPBinaryTree = new DCPBinaryTree(node);
+  let dcpBT: DCPBinaryTree = new DCPBinaryTree(node);
 
-//   let serialized = dcpBT.serialize();
-//   let deserialized: DCPNode<string> = dcpBT.deserialize(serialized);
+  console.log("Serializing BTree into string...");
+  let serialized = dcpBT.serialize(node);
 
-//   if (deserialized.left?.left?.value === "left.left") {
-//     console.log("Passed");
-//   } else {
-//     console.log("Failed");
-//   }
-// }
+  console.log("\nDeserializing into BTree from string...");
+  let rootNode: DCPNode<string> | null = dcpBT.deserialize(serialized);
+
+  if (rootNode?.left?.left?.value === "leftleft") {
+    console.log("Passed");
+  } else {
+    console.log("Failed");
+    console.log(`Expected 'leftleft' but got ${rootNode?.left?.left?.value}`);
+  }
+}
 
 function getBTreeDataFromDisk(): string[] {
   let treeValues: string[] = [];
@@ -156,7 +170,7 @@ function getBTreeDataFromDisk(): string[] {
   }
   console.log("Working with following input from file...");
   treeValues.map((entry) => {
-    process.stdout.write(`${entry} `);
+    process.stdout.write(`${entry + DCPBinaryTree.nodeDelimiter}`);
   });
   process.stdout.write("\n\n");
 
@@ -170,8 +184,8 @@ function realizeTree() {
   let dcpBT: DCPBinaryTree = new DCPBinaryTree();
 
   // Deserialize into BTree
-  console.log("Constructing (deserializing) into BTree...");
-  const btreeData = treeValues.join(',');
+  console.log("Deserializing into BTree...");
+  const btreeData = treeValues.join(DCPBinaryTree.nodeDelimiter);
   const root: DCPNode<string> | null = dcpBT.deserialize(btreeData);
 
   // Serialize for on-disk format
@@ -179,7 +193,13 @@ function realizeTree() {
     console.error("Deserialize returned invalid root node. The fucker, how dare it.");
     return;
   }
+
+  console.log("Serializing BTree...");
   dcpBT.serialize(root);
 }
 
+console.log("\n***Running local file test...***");
 realizeTree();
+console.log("\n***Running Google test...***");
+runRealizeTreeTest();
+console.log("\n All tests completed.");
